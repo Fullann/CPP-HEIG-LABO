@@ -7,10 +7,17 @@
  * Desc :  Ce programme calcule la racine carrée d'un nombre entier positif en utilisant la méthode de Héron
  */
 #include <iostream>
-#include <cmath>
 #include <iomanip>
 
 using namespace std;
+
+double myFabs(double x) {
+    if (x < 0) {
+        return -x;
+    } else {
+        return x;
+    }
+}
 
 // Fonction pour calculer la racine carrée d'un nombre en utilisant la méthode de Héron
 double heron_sqrt(double x, double epsilon = 1e-10)
@@ -22,15 +29,16 @@ double heron_sqrt(double x, double epsilon = 1e-10)
         return -1.0;
     }
 
-    // Initialisation de la valeur de départ pour la méthode de Héron
+    // Initialisation de la valeur de départ pour la méthod e de Héron
     double r = x / 2.0;
-
+    int i = 0;
     // Boucle pour calculer la racine carrée en utilisant la méthode de Héron
-    while (fabs(r * r - x) > epsilon)
+    while (myFabs(r * r - x) > epsilon)
     {
+        i++;
         r = 0.5 * (r + x / r);
     }
-
+    cout << "Nombre d'itérations : " << i << endl;
     // Retourne la valeur de la racine carrée calculée
     return r;
 }
