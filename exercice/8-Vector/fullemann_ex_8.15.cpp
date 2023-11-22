@@ -1,3 +1,12 @@
+/**
+ * Laboratoire sur l'exercice 8.15
+ * Author : Nathan Füllemann
+ * Date : 21.11.2023
+ * Updated on :
+ *
+ * Name: ConvertirEnString
+ * Desc : Ce programme permet de convertir un nombre en chaîne de caractères avec une base spécifiée.
+ */
 #include <iostream>
 #include <string>
 #include <vector>

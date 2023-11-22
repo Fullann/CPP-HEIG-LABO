@@ -1,3 +1,12 @@
+/**
+ * Laboratoire sur l'exercice 8.12
+ * Author : Nathan Füllemann
+ * Date : 20.11.2023
+ * Updated on :
+ *
+ * Name: Matrice
+ * Desc : Ce programme permet de manipuler une matrice.
+ */
 #include <iostream>
 #include <iomanip>
 

@@ -1,105 +1,99 @@
-/**
- * Laboratoire sur l'exercice 7.11
- * Author : Nathan Füllemann
- * Date : 14.11.2023
- * Updated on :
- *
- * Name: Extraction d'un fichier caché
- * Desc : Ce programme extrait un fichier caché dans une image BMP au moyen de la stéganographie
- */
 #include <iostream>
 #include <fstream>
-#include <bitset>
-#include <cstdint>
 
 using namespace std;
 
-// Fonction pour extraire un caractère du fichier image BMP
-char extractChar(ifstream &imageFile) {
+// Fonction pour extraire un caractère du nom de fichier caché à partir des composantes RGB
+char extractChar(ifstream& imageFile) {
     char character = 0;
-
     for (int i = 0; i < 8; ++i) {
-        char pixel;
-        imageFile.read(&pixel, sizeof(char));
-        character |= (pixel & 1) << i;
+        char pixelValue;
+        imageFile.read(&pixelValue, sizeof(pixelValue));
+        character |= ((pixelValue & 1) << i);
     }
-
     return character;
 }
 
-// Fonction pour extraire un entier 32 bits du fichier image BMP
-uint32_t extractInt(ifstream &imageFile) {
-    uint32_t value = 0;
-
+// Fonction pour extraire la taille du fichier caché à partir des composantes RGB
+unsigned int extractFileSize(ifstream& imageFile) {
+    unsigned int fileSize = 0;
     for (int i = 0; i < 32; ++i) {
-        char pixel;
-        imageFile.read(&pixel, sizeof(char));
-        value |= (pixel & 1) << i;
+        char pixelValue;
+        imageFile.read(&pixelValue, sizeof(pixelValue));
+        fileSize |= ((pixelValue & 1) << i);
     }
-
-    return value;
+    return fileSize;
 }
 
 int main() {
-    // Demander à l'utilisateur le nom du fichier image BMP
-    string imageFileName;
-    cout << "Entrez le nom du fichier image BMP : ";
-    cin >> imageFileName;
+    string imagePath;
+    cout << "Entrez le chemin de l'image BMP : ";
+    cin >> imagePath;
 
-    // Ouvrir le fichier image en mode binaire
-    ifstream imageFile(imageFileName, ios::binary);
+    ifstream imageFile(imagePath, ios::binary);
 
-    // Vérifier si le fichier image est ouvert correctement
-    if (!imageFile.is_open()) {
+    if (!imageFile) {
         cerr << "Erreur : Impossible d'ouvrir le fichier image." << endl;
         return 1;
     }
 
-    // Récupérer le nom du fichier caché
+    // Aller à la position où les données cachées commencent (à l'octet 10 du fichier BMP)
+    imageFile.seekg(10, ios::beg);
+    int dataOffset;
+    imageFile.read(reinterpret_cast<char*>(&dataOffset), sizeof(dataOffset));
+
+    // Aller à la position où les données cachées commencent
+    imageFile.seekg(dataOffset, ios::beg);
+
+    // Extraire le nom du fichier caché
     string hiddenFileName;
-    char currentChar;
-
-    do {
-        currentChar = extractChar(imageFile);
+    char currentChar = extractChar(imageFile);
+    while (currentChar != '\0') {
         hiddenFileName += currentChar;
-    } while (currentChar != '\0');
+        currentChar = extractChar(imageFile);
+    }
 
-    // Récupérer la taille du fichier caché
-    uint32_t hiddenFileSize = extractInt(imageFile);
+    // Extraire la taille du fichier caché
+    unsigned int hiddenFileSize = extractFileSize(imageFile);
 
-    // Demander confirmation à l'utilisateur pour créer ou écraser le fichier caché
-    cout << "Un fichier caché a été trouvé : " << hiddenFileName << endl;
-    cout << "Taille du fichier caché : " << hiddenFileSize << " octets." << endl;
+    cout << "Nom du fichier caché : " << hiddenFileName << endl;
+    cout << "Taille du fichier caché : " << hiddenFileSize << " octets" << endl;
 
-    char confirm;
+    // Revenir au début des données cachées
+    imageFile.seekg(dataOffset + hiddenFileName.size() * 8 + 32, ios::beg);
+
+    // Demander confirmation pour extraire le fichier
+    char confirmation;
     cout << "Voulez-vous extraire le fichier ? (o/n) : ";
-    cin >> confirm;
+    cin >> confirmation;
 
-    if (confirm == 'o' || confirm == 'O') {
-        // Créer le fichier caché
-        ofstream hiddenFile(hiddenFileName, ios::binary);
-        cout << hiddenFileName;
-        if (!hiddenFile.is_open()) {
-            cerr << "Erreur : Impossible de créer le fichier caché." << endl;
+    if (confirmation == 'o' || confirmation == 'O') {
+        ofstream outputFile(hiddenFileName, ios::binary);
+
+        if (!outputFile) {
+            cerr << "Erreur : Impossible de créer le fichier de sortie." << endl;
             return 1;
         }
 
-        // Copier le contenu du fichier caché
-        for (uint32_t i = 0; i < hiddenFileSize; ++i) {
-            char pixel;
-            imageFile.read(&pixel, sizeof(char));
-            hiddenFile.write(&pixel, sizeof(char));
+        // Copier les données cachées dans le fichier de sortie
+        char pixelValue = 0;
+        int bitCount = 0;
+        while (imageFile && outputFile && bitCount < 8 * hiddenFileSize) {
+            char bit;
+            imageFile.read(&bit, sizeof(bit));
+            pixelValue |= ((bit & 1) << (bitCount % 8));
+            bitCount++;
+
+            if (bitCount % 8 == 0) {
+                outputFile.write(&pixelValue, sizeof(pixelValue));
+                pixelValue = 0;
+            }
         }
 
-        hiddenFile.close();
-
-        cout << "Le fichier caché a été extrait avec succès." << endl;
+        cout << "Extraction réussie." << endl;
     } else {
-        cout << "Opération annulée." << endl;
+        cout << "Extraction annulée par l'utilisateur." << endl;
     }
-
-    // Fermer le fichier image
-    imageFile.close();
 
     return 0;
 }

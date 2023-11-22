@@ -1,3 +1,12 @@
+/**
+ * Laboratoire sur l'exercice 8.8
+ * Author : Nathan Füllemann
+ * Date : 20.11.2023
+ * Updated on :
+ *
+ * Name:  Fibonacci
+ * Desc : Ce programme calcule le nombre de Fibonacci fn pour une valeur de n donnée par l'utilisateur.
+ */
 #include <iostream>
 #include <vector>
 

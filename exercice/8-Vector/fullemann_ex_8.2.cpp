@@ -1,34 +1,42 @@
 #include <iostream>
-#include <limits>
+#include <vector>
 using namespace std;
 
 int main() {
+    vector<int> nombres;
     int nombre;
-    int minimum = numeric_limits<int>::max();
-    int maximum = numeric_limits<int>::min();
-    int occurrenceMinimum = 0;
-    int occurrenceMaximum = 0;
 
     cout << "Entrez une suite de nombres entiers (terminer avec un caractère non numérique):" << endl;
 
     while (cin >> nombre) {
-        if (nombre < minimum) {
-            minimum = nombre;
-            occurrenceMinimum = 1;
-        } else if (nombre == minimum) {
-            occurrenceMinimum++;
-        }
-
-        if (nombre > maximum) {
-            maximum = nombre;
-            occurrenceMaximum = 1;
-        } else if (nombre == maximum) {
-            occurrenceMaximum++;
-        }
+        nombres.push_back(nombre);
     }
 
-    cout << "Valeur minimale : " << minimum << " (occurrence : " << occurrenceMinimum << " fois)" << endl;
-    cout << "Valeur maximale : " << maximum << " (occurrence : " << occurrenceMaximum << " fois)" << endl;
+    if (!nombres.empty()) {
+        int minimum = nombres[0];
+        int maximum = nombres[0];
+        int occurrenceMinimum = 0;
+        int occurrenceMaximum = 0;
+
+        for (int i = 0; i < nombres.size(); i++) {
+            if (nombres[i] < minimum) {
+                minimum = nombres[i];
+                occurrenceMinimum = 1;
+            } else if (nombres[i] == minimum) {
+                occurrenceMinimum++;
+            }
+
+            if (nombres[i] > maximum) {
+                maximum = nombres[i];
+                occurrenceMaximum = 1;
+            } else if (nombres[i] == maximum) {
+                occurrenceMaximum++;
+            }
+        }
+
+        cout << "Minimum: " << minimum << ", occurrences: " << occurrenceMinimum << endl;
+        cout << "Maximum: " << maximum << ", occurrences: " << occurrenceMaximum << endl;
+    }
 
     return 0;
 }
