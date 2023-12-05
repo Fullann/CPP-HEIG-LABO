@@ -7,6 +7,30 @@
  * Name : Algorithme de tri
  * Desc : Ce fichier contient les fonctions de tri fusion, tri à bulle et fusion-insertion
  */
+/*
+
+* Fonction fusion
+Meilleur Cas :
+
+La meilleure situation se produit lorsque les vecteurs d'entrée v et w sont déjà triés.
+Dans ce cas, la fusion se fait en parcourant une fois chaque vecteur et en comparant les éléments.
+La complexité temporelle est de l'ordre de O(n), où n est la taille du vecteur.
+Pire Cas :
+
+Le pire cas survient lorsque les vecteurs d'entrée v et w sont dans un ordre inverse (décroissant).
+Dans ce cas, la complexité temporelle est également de l'ordre de O(n), car chaque élément des deux vecteurs doit être comparé et ajouté au vecteur résultant.
+
+* Fonction fusion_insertion
+Meilleur Cas :
+
+Le meilleur cas se produit lorsque le vecteur d'entrée v est déjà trié, car il n'y aura pas besoin d'insertions au milieu du vecteur.
+La complexité temporelle est de l'ordre de O(n), où n est la taille du vecteur.
+Pire Cas :
+
+Le pire cas se produit lorsque le vecteur d'entrée v est dans un ordre inverse et que chaque élément du vecteur w doit être inséré au début du vecteur v.
+Dans ce cas, la complexité temporelle est de l'ordre de O(n^2), car chaque élément de w nécessite une insertion, et le décalage des éléments suivants peut prendre jusqu'à O(n) pour chaque insertion.
+
+*/
 using namespace std;
 
 /// @brief Tri fusion
@@ -61,7 +85,6 @@ void fusion_insertion(vector<T> &v, const vector<T> &w)
 {
     auto iter_v = v.begin();
     auto iter_w = w.begin();
-
     // Fusionner les vecteurs v et w avec insertion
     while (iter_v != v.end() && iter_w != w.end())
     {

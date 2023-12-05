@@ -29,9 +29,10 @@ int main()
 
         chrono::high_resolution_clock::time_point heure_avant =
             chrono::high_resolution_clock::now();
-        tri_fusion(v); /***** ou bien: tri_a_bulle(v); *****/
-        temps = chrono::duration_cast<chrono::duration<double>>(chrono::high_resolution_clock::now() - heure_avant).count();
+        tri_a_bulle(v);
+        temps = chrono::duration_cast<chrono::duration<double> >(chrono::high_resolution_clock::now() - heure_avant).count();
         cout << n << " " << temps << endl;
         n *= 2;
     } while (temps < 20.0);
+
 }
